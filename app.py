@@ -1,4 +1,3 @@
-# using python 3
 from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
@@ -15,7 +14,9 @@ Bootstrap(app)
 # instead of using a CDN
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 
+#make the field for the name search
 class NameForm(FlaskForm):
+    #give a name to the variable that is the search function (here the vairable is called name. below it is interest, publication and location), make validation optional so not all seach boxes required
     name = StringField('Search by name', validators=[Optional()])
     nameSubmit = SubmitField('Search')
     
@@ -31,12 +32,13 @@ class LocationForm(FlaskForm):
     location = StringField('Search by location', validators=[Optional()])
     locationSubmit = SubmitField('Search')
     
+#put the names in a list
 def get_names(source):
     names = []
     for row in source:
         name = row["name"]
         names.append(name)
-    return (names)
+    return sorted (names)
 
 def get_journalist(source, id):
     for row in source:
@@ -65,28 +67,19 @@ def get_id(source, name):
     # return these if id is not valid - not a great solution, but simple
     return "Unknown"
 
-def get_interests(source):
-    interests = []
-    for row in source:
-        id = row["id"]
-        name = row["name"]
-        interest = row["interest"]
-        interests.append([id, name, interest])
-    return (interests)
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index.html', methods=['GET', 'POST'])
 def names():
-    # you must tell the variable 'form' what you named the class, above
-    # 'form' is the variable name used in this template: index.html
-    form = NameForm(csrf_enabled=False)
+    names = get_names(JOURNALISTS)
+    #pull in all the forms
     name_form = NameForm()
     interest_form = InterestForm()
     publication_form = PublicationForm()
     location_form = LocationForm()
+    #if the form works
     if name_form.validate_on_submit():
+        #make a variable that stores the data. this is the name of the form class variable (dot) the name of the stringfield (here it is name) (dot) the data
         name = name_form.name.data
-        names = get_names(JOURNALISTS)
         if name in names:
             name_form.name.data = ""
             id = get_id(JOURNALISTS, name)
@@ -114,7 +107,7 @@ def names():
             # redirect the browser to another route and template
         return redirect( url_for('location', location=location) )
     else:
-        message = "That journalist did not attend ONA17"
+        print ("That journalist did not attend ONA17")
     # notice that we don't need to pass name or names to the template
     return render_template('index.html', name_form=name_form, interest_form=interest_form, publication_form=publication_form, location_form=location_form)
 

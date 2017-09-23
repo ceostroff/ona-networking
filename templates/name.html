@@ -6,6 +6,9 @@
 {% endblock %}
 
 
+{% block title %}
+Selected Journalist: {{ name }}
+{% endblock %}
 
 
 {% block content %}
@@ -18,15 +21,21 @@
 
       <h1>{{ name }}</h1>
     <p>{{title}}</p>
-        <p>{{publication}}</p>
-        <p>{{interest}}</p>
-        <p>{{location}}</p>
+    <p>{{publication}}</p>
+    <p>{{interest}}</p>
+    <p>{{location}}</p>
+
+      <p><a href="{{ url_for('index') }}">Return to search page</a></p>
+
       <!--
       notice how the URL in the link above is rendered for
       Flask - it needs to name the FUNCTION, not the route
       -->
+
     </div>
     <div class="col-xs-12 col-sm-6">
+
+    
 
     </div>
   </div>
